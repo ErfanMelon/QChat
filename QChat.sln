@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32804.467
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{853CE878-57DC-46A3-9701-EC094CAF8DA6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{D8C7C9B2-3F3B-4A26-A87F-DFC16A8ABF96}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{A3431A12-3138-4573-821D-FA130B6C04D0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{C6BBD200-9E92-4F48-B05B-53FDFCD5D0A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QChat.Application", "src\Core\QChat.Application\QChat.Application.csproj", "{65ADED7D-D05C-4814-9C11-A667A0BA5F0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QChat.Domain", "src\Core\QChat.Domain\QChat.Domain.csproj", "{98DFF2E5-C409-4A78-A075-E6FC35662725}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QChat.Persistance", "src\Infrastructure\QChat.Persistance\QChat.Persistance.csproj", "{D8434F0B-D436-44F2-9705-085126893FD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QChat.EndPoint", "src\Presentation\QChat.EndPoint\QChat.EndPoint.csproj", "{711A025D-1A7D-4A19-AFFA-9DC955DDF4B1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65ADED7D-D05C-4814-9C11-A667A0BA5F0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65ADED7D-D05C-4814-9C11-A667A0BA5F0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65ADED7D-D05C-4814-9C11-A667A0BA5F0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65ADED7D-D05C-4814-9C11-A667A0BA5F0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98DFF2E5-C409-4A78-A075-E6FC35662725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98DFF2E5-C409-4A78-A075-E6FC35662725}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98DFF2E5-C409-4A78-A075-E6FC35662725}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98DFF2E5-C409-4A78-A075-E6FC35662725}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8434F0B-D436-44F2-9705-085126893FD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8434F0B-D436-44F2-9705-085126893FD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8434F0B-D436-44F2-9705-085126893FD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8434F0B-D436-44F2-9705-085126893FD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{711A025D-1A7D-4A19-AFFA-9DC955DDF4B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{711A025D-1A7D-4A19-AFFA-9DC955DDF4B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{711A025D-1A7D-4A19-AFFA-9DC955DDF4B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{711A025D-1A7D-4A19-AFFA-9DC955DDF4B1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D8C7C9B2-3F3B-4A26-A87F-DFC16A8ABF96} = {853CE878-57DC-46A3-9701-EC094CAF8DA6}
+		{A3431A12-3138-4573-821D-FA130B6C04D0} = {853CE878-57DC-46A3-9701-EC094CAF8DA6}
+		{C6BBD200-9E92-4F48-B05B-53FDFCD5D0A7} = {853CE878-57DC-46A3-9701-EC094CAF8DA6}
+		{65ADED7D-D05C-4814-9C11-A667A0BA5F0D} = {D8C7C9B2-3F3B-4A26-A87F-DFC16A8ABF96}
+		{98DFF2E5-C409-4A78-A075-E6FC35662725} = {D8C7C9B2-3F3B-4A26-A87F-DFC16A8ABF96}
+		{D8434F0B-D436-44F2-9705-085126893FD4} = {A3431A12-3138-4573-821D-FA130B6C04D0}
+		{711A025D-1A7D-4A19-AFFA-9DC955DDF4B1} = {C6BBD200-9E92-4F48-B05B-53FDFCD5D0A7}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1C42C392-1520-4D9F-8362-A7E0C9C031CC}
+	EndGlobalSection
+EndGlobal
