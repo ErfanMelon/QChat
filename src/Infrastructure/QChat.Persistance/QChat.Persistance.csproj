@@ -15,4 +15,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\QChat.Application\QChat.Application.csproj" />
+    <ProjectReference Include="..\..\Core\QChat.Domain\QChat.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
