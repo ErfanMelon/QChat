@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\QChat.Common\QChat.Common.csproj" />
     <ProjectReference Include="..\QChat.Domain\QChat.Domain.csproj" />
   </ItemGroup>
 
