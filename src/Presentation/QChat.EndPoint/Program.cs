@@ -1,4 +1,8 @@
+using Microsoft.Extensions.DependencyInjection;
 using QChat.Application;
+using QChat.Application.Interfaces;
+using QChat.EndPoint.Hubs;
+using QChat.EndPoint.Services;
 using QChat.Persistance;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +13,9 @@ builder.Services.AddRazorPages();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,9 +31,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 
-app.MapRazorPages();
+app.UseEndpoints(endpoint =>
+{
+    endpoint.MapRazorPages();
+    endpoint.MapHub<DefaultHub>("/Hub/Default");
+});
 
 app.Run();

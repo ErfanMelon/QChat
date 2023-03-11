@@ -136,3 +136,21 @@
         </Ul>
     </div>
 </div>
+@section Scripts
+{
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script>
+        var connection = new signalR
+            .HubConnectionBuilder()
+            .withUrl("/Hub/Default")
+            .build();
+
+        connection.on("Connected", ConnectedToHub);
+        connection.start();
+        
+        function ConnectedToHub(msg) {
+            console.log(msg);
+        }
+    </script>
+}
