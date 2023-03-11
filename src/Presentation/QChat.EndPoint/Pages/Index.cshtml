@@ -48,6 +48,7 @@
     <div class="col-4 rooms">
         <Ul>
             <li>
+                <button class="btn btn-success mb-2" style="width:100%;" data-toggle="modal" data-target="#NewChatModal">چت جدید</button>
                 <form>
                     <input type="text" placeholder="جستوجو کنید" class="form-control" />
                     <i class="fa fas fa-search"></i>
@@ -148,9 +149,36 @@
 
         connection.on("Connected", ConnectedToHub);
         connection.start();
-        
+
         function ConnectedToHub(msg) {
             console.log(msg);
         }
     </script>
+}
+@section Modals
+{
+    <div class="modal fade" id="NewChatModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">چت جدید</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="form-label">عنوان گروه</label>
+                        <input class="form-control" type="text" placeholder="عنوان گروه را وارد کنید"/>
+                        <br />
+                        <label class="form-label">تصویر گروه</label>
+                        <input class="form-control" type="file" accept="image/*"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
+                    <button type="button" class="btn btn-primary">ایجاد</button>
+                </div>
+            </div>
+        </div>
+    </div>
 }
