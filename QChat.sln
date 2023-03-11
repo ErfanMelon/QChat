@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QChat.Persistance", "src\In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QChat.EndPoint", "src\Presentation\QChat.EndPoint\QChat.EndPoint.csproj", "{711A025D-1A7D-4A19-AFFA-9DC955DDF4B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QChat.Common", "src\Core\QChat.Common\QChat.Common.csproj", "{35E780BF-5BC7-4A4E-8DC7-2EF9A9FB88EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QChat.Common", "src\Core\QChat.Common\QChat.Common.csproj", "{35E780BF-5BC7-4A4E-8DC7-2EF9A9FB88EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
