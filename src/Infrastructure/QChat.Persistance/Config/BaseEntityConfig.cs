@@ -13,8 +13,12 @@ public static class BaseEntityConfig
     public static void SetDefaultShadowProperties(ref ModelBuilder builder)
     {
         var entities = builder.Model.FindLeastDerivedEntityTypes(typeof(BaseEntityKeyLess));
-        foreach (var item in entities)
+        entities = entities.Concat(builder.Model.FindLeastDerivedEntityTypes(typeof(BaseEntity)));
+        entities = entities.Concat(builder.Model.FindLeastDerivedEntityTypes(typeof(BaseEntity<long>)));
+        //entities = entities.Concat(builder.Model.FindLeastDerivedEntityTypes(typeof(BaseEntity<>)));
+        foreach (var item in entities.Distinct())
         {
+            //Console.WriteLine(item.Name);
             builder.Entity(item.Name).Property<DateTime>("CreateDate");
             builder.Entity(item.Name).Property<DateTime?>("RemoveDate")
                 .IsRequired(false);

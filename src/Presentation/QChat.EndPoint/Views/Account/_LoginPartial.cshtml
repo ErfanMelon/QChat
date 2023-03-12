@@ -1,9 +1,25 @@
 ﻿@model LoginUserCommand
 
 <div id="login" class="auth">
-    <form asp-page-handler="Login" method="post">
+    <form asp-action="Login" asp-controller="Account" method="post">
         <h1 class="text-center">ورود به حساب</h1>
-        <div asp-validation-summary="ModelOnly"></div>
+        <div asp-validation-summary="ModelOnly">
+            <ul>
+                @if (TempData["ModelState"] != null)
+                {
+                    foreach (var item in TempData["ModelState"] as Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary)
+                    {
+                        foreach (var error in @item.Value.Errors)
+                        {
+                            <li>
+                                @error.ErrorMessage
+                            </li>
+                        }
+                    }
+                }
+
+            </ul>
+        </div>
         <br />
         <label>نام کاربری : </label>
         <input type="text" class="form-control" asp-for="Username" />

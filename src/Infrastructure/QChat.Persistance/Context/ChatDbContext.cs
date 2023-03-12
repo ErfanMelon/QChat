@@ -8,18 +8,21 @@ namespace QChat.Persistance.Context;
 
 public class ChatDbContext : DbContext, IChatDbContext
 {
-	public ChatDbContext(DbContextOptions options) : base(options) { }
-	public virtual DbSet<User> Users { get; set; }
-	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-	{
-		BaseEntityConfig.QuantificationDefaultShadowProperties(ChangeTracker);
-		return base.SaveChangesAsync(cancellationToken);
-	}
-	protected override void OnModelCreating(ModelBuilder modelBuilder)
-	{
-		BaseEntityConfig.SetDefaultShadowProperties(ref modelBuilder);
+    public ChatDbContext(DbContextOptions options) : base(options) { }
+    public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<Chat> Chats { get; set; }
+    public virtual DbSet<Message> Messages { get; set; }
+    public virtual DbSet<UserChat> UserChats { get; set; }
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        BaseEntityConfig.QuantificationDefaultShadowProperties(ChangeTracker);
+        return base.SaveChangesAsync(cancellationToken);
+    }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        BaseEntityConfig.SetDefaultShadowProperties(ref modelBuilder);
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly()); // set configuration for all entities
-		base.OnModelCreating(modelBuilder);
-	}
+        base.OnModelCreating(modelBuilder);
+    }
 }

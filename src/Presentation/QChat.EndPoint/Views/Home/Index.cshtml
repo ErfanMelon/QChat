@@ -1,0 +1,124 @@
+﻿@{
+    ViewData["Title"] = "چت";
+}
+<div class="row">
+    <div class="col-8 chat-content">
+        <div class="header">
+            <img src="img/Default.jpg" />
+            <h2>علی</h2>
+        </div>
+        <div class="chats">
+            <div class="chat-me">
+                <div class="chat">
+                    <p>سلام خوبی چه خبر ؟ </p>
+                    <span>2020/06/05</span>
+                </div>
+            </div>
+            <div class="chat-you">
+                <div class="chat">
+                    <p>سلام ممنون یه خبر خیلییی خوبی دارم برات</p>
+                    <span>2020/06/05</span>
+                </div>
+            </div>
+            <div class="chat-me">
+                <div class="chat">
+                    <p>چی ؟!!</p>
+                    <span>2020/06/05</span>
+                </div>
+            </div>
+            <div class="chat-you">
+                <div class="chat">
+                    <p>توی سایت codeYad دوره SignalR رایگان برگزار شده</p>
+                    <span>2020/06/05</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <form>
+                <input type="text" class="form-control" placeholder="متن خود را وارد کنید">
+                <button class="btn btn-success">
+                    ارسال
+                    <i class="fa fa-send"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="col-4 rooms">
+        <Ul>
+            <li>
+                <button class="btn btn-success mb-2" style="width:100%;" data-toggle="modal" data-target="#NewChatModal">چت جدید</button>
+                <form>
+                    <input type="text" placeholder="جستوجو کنید" class="form-control" />
+                    <i class="fa fas fa-search"></i>
+                </form>
+            </li>
+            <ul id="chatList">
+            </ul>
+        </Ul>
+    </div>
+</div>
+@section Scripts
+{
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script>
+        var connection = new signalR
+            .HubConnectionBuilder()
+            .withUrl("/Hub/Default")
+            .build();
+
+        connection.on("Connected", ConnectedToHub);
+        connection.start();
+
+        function ConnectedToHub(msg) {
+            console.log(msg);
+        }
+
+        function CreateGroup(event) {
+            event.preventDefault();
+            $("#NewChatModal .btn-primary").attr("disabled", true);
+            var formData = new FormData();
+            formData.append("Title", event.target[1].value);
+            if (event.target[2].files[0]) {
+                formData.append("Image", event.target[2].files[0]);
+            }
+             $.ajax({
+                type: "POST",
+                url: '@Url.Action("CreateGroup", "Home")',
+                contentType: false,
+                 processData: false,
+                 enctype:"multipart/form-data",
+                 data: formData,
+                success: function (data) {
+
+                    if (data.isSuccess == true) {
+
+                        $('#chatList').append(`<li data-chatid="${data.value}">
+                    ${event.target[1].value}
+                    <img src="img/Default.jpg" />
+                    <span> لحظاتی پیش </span>
+                </li>`);
+                        $('#NewChatModal').modal('hide');
+                        $('#NewChatModal #GroupImage').val('');
+                        $('#NewChatModal #txtGroupTitle').val('');
+                    }
+                    else {
+
+                        alert(data.error);
+                    }
+
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status);
+                    alert(thrownError);
+                }
+
+             });
+            $('#NewChatModal .btn-primary').prop("disabled", false);
+        }
+    </script>
+}
+@section Modals
+{
+    <partial name="_NewChatPartial" model="default!" />
+}

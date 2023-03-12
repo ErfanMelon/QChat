@@ -27,10 +27,10 @@ public static class ApplicationServices
             config.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         }).AddCookie(option =>
         {
-            option.LoginPath = new PathString("/Go");
+            option.LoginPath = new PathString("/Account");
             option.LogoutPath = new PathString("/Logout");
             option.ExpireTimeSpan = TimeSpan.FromDays(30);
-            option.AccessDeniedPath = "/Go";
+            option.AccessDeniedPath = "/Account";
         });
         return services;
     }

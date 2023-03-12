@@ -1,7 +1,7 @@
 ﻿@model CreateUserCommand
 
 <div id="register" class="auth" style="display: none;">
-    <form asp-page-handler="Register" method="post">
+    <form asp-action="Register" asp-controller="Account" method="post">
         <h1 class="text-center">ثبت نام</h1>
         <div asp-validation-summary="ModelOnly"></div>
         <br />

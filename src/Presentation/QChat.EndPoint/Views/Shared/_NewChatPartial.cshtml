@@ -1,0 +1,27 @@
+﻿@model NewChatCommand
+
+    <div class="modal fade" id="NewChatModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form method="post" class="modal-content" enctype="multipart/form-data" onsubmit="CreateGroup(event)">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">چت جدید</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="form-label">عنوان گروه</label>
+                        <input asp-for="Title" class="form-control" type="text" placeholder="عنوان گروه را وارد کنید" id="txtGroupTitle" />
+                        <br />
+                        <label class="form-label">تصویر گروه</label>
+                        <input asp-for="Image" class="form-control" type="file" accept="image/*" id="GroupImage" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
+                    <button type="submit" class="btn btn-primary"> ایجاد</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
