@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QChat.Application.Interfaces;
 using QChat.Application.Services.Chats.Commands;
+using QChat.Application.Services.Users.Queries;
 using QChat.EndPoint.Models;
 using QChat.EndPoint.Services;
 using System.Diagnostics;
@@ -20,7 +21,11 @@ public class HomeController : Controller
         _currentUserService = currentUserService;
     }
 
-    public IActionResult Index() => View();
+    public async Task<IActionResult> Index()
+    {
+        ViewBag.Chats = await _mediator.Send(new GetChatsQuery(_currentUserService.UserId));
+        return View();
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
@@ -31,6 +36,11 @@ public class HomeController : Controller
     public async Task<IActionResult> CreateGroup(NewChatCommand command)
     {
         command.UserId = _currentUserService.UserId;
+        var result = await _mediator.Send(command);
+        return result.ToJson();
+    }
+    public async Task<IActionResult> AddUserToGroup(AddUserToGroupCommand command)
+    {
         var result = await _mediator.Send(command);
         return result.ToJson();
     }

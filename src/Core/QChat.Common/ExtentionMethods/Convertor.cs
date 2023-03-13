@@ -2,7 +2,7 @@
 
 public static class Convertor
 {
-    public static Guid ToGuid(this string guid)
+    public static Guid ToGuid(this string? guid)
     {
         if (Guid.TryParse(guid, out Guid result))
             return result;

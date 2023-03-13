@@ -1,0 +1,32 @@
+﻿@model AddUserToGroupCommand
+
+<div class="modal fade" id="ChatInfoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form class="modal-dialog" role="document" method="post" onsubmit="AddUserToGroup(event)">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">اطلاعات گروه</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <h4 class="form-label text-center">اعضای گروه</h4>
+                    <h5 class="mb-2">علی</h5>
+                    <h5 class="mb-2">علی</h5>
+                    <h5 class="mb-2">علی</h5>
+                    <hr>
+                    <label class="form-label">عضو جدید</label>
+                    <div class="input-group">
+                        <input type="hidden" asp-for="ChatId"/>
+                        <input asp-for="UserName" class="form-control" placeholder="نام کاربری را وارد کنید">
+                        <span asp-validation-for="UserName"></span>
+                        <button class="btn btn-info" type="submit">افزودن</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width:100%;">بستن</button>
+            </div>
+        </div>
+    </form>
+</div>

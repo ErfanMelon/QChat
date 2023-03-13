@@ -3,7 +3,7 @@
 }
 <div class="row">
     <div class="col-8 chat-content">
-        <div class="header">
+        <div class="header" id="ChatOption" data-chatId="25">
             <img src="img/Default.jpg" />
             <h2>علی</h2>
         </div>
@@ -53,6 +53,24 @@
                 </form>
             </li>
             <ul id="chatList">
+                @if (ViewBag.Chats?.IsSuccess??false)
+                {
+                    foreach (var chat in ViewBag.Chats.Value as List<ChatBreifDto>)
+                    {
+                        <li data-chatid="@chat.Id">
+                            @chat.Title
+                            @if (chat.ImageSrc != null)
+                            {
+                                <img src="/@chat.ImageSrc" />
+                            }
+                            else
+                            {
+                                <img src="/img/Default.jpg" />
+                            }
+                            <span> لحظاتی پیش </span>
+                        </li>
+                    }
+                }
             </ul>
         </Ul>
     </div>
@@ -117,8 +135,41 @@
             $('#NewChatModal .btn-primary').prop("disabled", false);
         }
     </script>
+    <script>
+        $("#ChatOption").on('click', function () {
+            $('#ChatInfoModal').modal('toggle');
+            var chatId = $(this).attr("data-chatId");
+            $('#ChatInfoModal .input-group #ChatId').val(chatId);
+            // Get Chat Data And Show To ChatInfoModal
+        });
+        function AddUserToGroup(event) {
+            event.preventDefault();
+            var formData = {
+                UserName: event.target[2].value,
+                ChatId: event.target[1].value
+            };
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddUserToGroup","Home")',
+                data: formData,
+                success: function (data) {
+                    if (data.isSuccess) {
+                        $('#ChatInfoModal').modal('hide');
+                    }
+                    else {
+                        alert(data.error);
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status);
+                    alert(thrownError);
+                }
+            });
+        }
+    </script>
 }
 @section Modals
 {
     <partial name="_NewChatPartial" model="default!" />
+    <partial name="_ChatInfoPartial" model="default!"/>
 }
