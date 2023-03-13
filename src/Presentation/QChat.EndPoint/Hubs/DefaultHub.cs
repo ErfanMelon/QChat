@@ -17,7 +17,7 @@ public class DefaultHub : Hub
     }
     public override async Task OnConnectedAsync()
     {
-        await Clients.Caller.SendAsync("Connected", $"Hello {_currentUserService.Name}");
+        await Clients.Caller.SendAsync("Connected",_currentUserService.Name);
         await base.OnConnectedAsync();
     }
     public async Task NewGroup(NewChatCommand command)

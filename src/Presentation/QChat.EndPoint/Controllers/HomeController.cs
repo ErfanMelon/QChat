@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QChat.Application.Interfaces;
 using QChat.Application.Services.Chats.Commands;
+using QChat.Application.Services.Chats.Queries;
 using QChat.Application.Services.Users.Queries;
 using QChat.EndPoint.Models;
 using QChat.EndPoint.Services;
@@ -39,9 +40,17 @@ public class HomeController : Controller
         var result = await _mediator.Send(command);
         return result.ToJson();
     }
+    [HttpPost]
     public async Task<IActionResult> AddUserToGroup(AddUserToGroupCommand command)
     {
         var result = await _mediator.Send(command);
+        return result.ToJson();
+    }
+    [HttpPost]
+    public async Task<IActionResult> GetChat(long? chatId)
+    {
+        var query = new GetChatQuery(chatId, _currentUserService.UserId);
+        var result = await _mediator.Send(query);
         return result.ToJson();
     }
 }

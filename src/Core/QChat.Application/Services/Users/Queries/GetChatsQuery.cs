@@ -8,7 +8,7 @@ using QChat.Common.ExtentionMethods;
 
 namespace QChat.Application.Services.Users.Queries;
 
-public class GetChatsQuery:IRequest<Result<List<ChatBreifDto>>>
+public class GetChatsQuery : IRequest<Result<List<ChatBreifDto>>>
 {
     public GetChatsQuery(string? userId)
     {
@@ -30,8 +30,8 @@ public class GetChatsQuery:IRequest<Result<List<ChatBreifDto>>>
         public async Task<Result<List<ChatBreifDto>>> Handle(GetChatsQuery request, CancellationToken cancellationToken)
         {
             var chats = _context.UserChats
-                .Include(e => e.Chat)
                 .AsNoTracking()
+                .Include(e => e.Chat)
                 .Where(e => e.UserId == request.UserId.ToGuid())
                 .Select(e => e.Chat);
 
