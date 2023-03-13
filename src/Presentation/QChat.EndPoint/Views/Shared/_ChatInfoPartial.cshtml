@@ -11,13 +11,15 @@
             <div class="modal-body">
                 <div class="row">
                     <h4 class="form-label text-center">اعضای گروه</h4>
-                    <h5 class="mb-2">علی</h5>
-                    <h5 class="mb-2">علی</h5>
-                    <h5 class="mb-2">علی</h5>
+                    <div id="members">
+                        <h5 class="mb-2">علی</h5>
+                        <h5 class="mb-2">علی</h5>
+                        <h5 class="mb-2">علی</h5>
+                    </div>
                     <hr>
                     <label class="form-label">عضو جدید</label>
                     <div class="input-group">
-                        <input type="hidden" asp-for="ChatId"/>
+                        <input type="hidden" asp-for="ChatId" />
                         <input asp-for="UserName" class="form-control" placeholder="نام کاربری را وارد کنید">
                         <span asp-validation-for="UserName"></span>
                         <button class="btn btn-info" type="submit">افزودن</button>

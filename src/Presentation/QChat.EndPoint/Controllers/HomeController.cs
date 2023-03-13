@@ -53,4 +53,11 @@ public class HomeController : Controller
         var result = await _mediator.Send(query);
         return result.ToJson();
     }
+    [HttpPost]
+    public async Task<IActionResult> GetChatInfo(long? chatId)
+    {
+        var query = new GetChatDetailQuery(chatId, _currentUserService.UserId);
+        var result = await _mediator.Send(query);
+        return result.ToJson();
+    }
 }

@@ -141,10 +141,30 @@
     </script>
     <script>
         $("#ChatOption").on('click', function () {
-            $('#ChatInfoModal').modal('toggle');
-            var chatId = $(this).attr("data-chatId");
-            $('#ChatInfoModal .input-group #ChatId').val(chatId);
+            $('#ChatInfoModal #members').html('');
+            var selectedchatId = $(this).attr("data-chatId");
+            $('#ChatInfoModal .input-group #ChatId').val(selectedchatId);
             // Get Chat Data And Show To ChatInfoModal
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetChatInfo", "Home")',
+                data: { chatId: selectedchatId },
+                success: function (data) {
+                    if (data.isSuccess) {
+                        for (i in data.value.members) {
+                            $('#ChatInfoModal #members').append(`<h5 class="mb-2">${data.value.members[i]}</h5>`)
+                        }
+                        $('#ChatInfoModal').modal('show');
+                    }
+                    else {
+                        alert(data.error);
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status);
+                    alert(thrownError);
+                }
+            });
         });
         function AddUserToGroup(event) {
             event.preventDefault();
@@ -159,6 +179,7 @@
                 success: function (data) {
                     if (data.isSuccess) {
                         $('#ChatInfoModal').modal('hide');
+                        $('#ChatInfoModal #UserName').val('');
                     }
                     else {
                         alert(data.error);

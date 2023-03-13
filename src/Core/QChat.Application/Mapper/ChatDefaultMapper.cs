@@ -24,5 +24,8 @@ public class ChatDefaultMapper:Profile
 				PostDate=e.PostDate,
 				Username=e.User.UserName
 			}).ToList()));
+
+		CreateMap<Chat, ChatInfoDto>()
+			.ForMember(e => e.Members, i => i.MapFrom(c => c.UserChats.Select(x => x.User.UserName).ToList()));
 	}
 }
