@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-8 chat-content">
         <div id="currentChat" style="display:none">
-            <div class="header" id="ChatOption" data-chatId="25">
+            <div class="header" id="ChatOption" data-chatId="0">
                 <img src="img/Default.jpg" />
                 <h2>علی</h2>
             </div>
@@ -35,13 +35,13 @@
                 </div>
             </div>
             <div class="footer">
-                <form>
-                    <input type="text" class="form-control" placeholder="متن خود را وارد کنید">
-                    <button class="btn btn-success">
+                <div>
+                    <input type="text" class="form-control" id="txtMessage" placeholder="متن خود را وارد کنید">
+                    <button class="btn btn-success" id="btnSendMessage" type="button">
                         ارسال
                         <i class="fa fa-send"></i>
                     </button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -83,6 +83,8 @@
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
     <script>
         var UserName = "USERNAME";
+        var CHATID = 0;
+        var sessionId = "";
         var connection = new signalR
             .HubConnectionBuilder()
             .withUrl("/Hub/Default")
@@ -91,9 +93,10 @@
         connection.on("Connected", ConnectedToHub);
         connection.start();
 
-        function ConnectedToHub(username) {
+        function ConnectedToHub(username,id) {
             UserName = username;
             console.log(`Hello ${username}`);
+            sessionId = id;
         }
 
         function CreateGroup(event) {
@@ -196,14 +199,18 @@
 
         $('#chatList li').on('click', function () {
             var clickedchatId = $(this).attr("data-chatid");
-        $.ajax({
+            LoadChat(clickedchatId);
+        });
+        function LoadChat(id) {
+            $.ajax({
             type: 'POST',
-            url: '@Url.Action("GetChat", "Home")',
-            data: { chatId: clickedchatId  },
+                url: '@Url.Action("GetChat", "Home")',
+                data: { chatId: id, oldChatId: CHATID, connectionId:sessionId },
             success: function (data) {
                 if (data.isSuccess) {
+                    CHATID = id;
                     $('#currentChat .chats').html(''); // clear old chats
-                    $('#ChatOption').attr('data-chatId', clickedchatId); // change chatId
+                    $('#ChatOption').attr('data-chatId', id); // change chatId
                     $('#currentChat').css('display', 'block'); // show current chat page
                     if (data.value.imageSrc) { // change chat image
                         $('#currentChat .header img').attr('src', `/${data.value.imageSrc}`);
@@ -242,8 +249,25 @@
                 alert(thrownError);
             }
         });
-    });
+        }
+        connection.on("UpdateChat", RecieveMessage);
+        function RecieveMessage(chatId) {
+            console.log(chatId);
+            console.log(CHATID);
+            console.log(chatId == CHATID);
+            console.log(chatId === CHATID);
+            if (chatId == CHATID) {
+                LoadChat(chatId);
+            }
+        }
 
+        $('#btnSendMessage').on('click', function () {
+            var msg = $("#txtMessage").val();
+            if (msg) {
+                connection.invoke('SendMessage', msg, $('#ChatOption').attr('data-chatId'));
+                $("#txtMessage").val('');
+            }
+        })
     </script>
 }
 @section Modals

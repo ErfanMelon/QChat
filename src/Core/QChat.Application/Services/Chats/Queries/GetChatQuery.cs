@@ -77,6 +77,6 @@ public class ChatDetailedDto
 public class MessageBriefDto
 {
     public string Username { get; set; }
-    public DateTime PostDate { get; set; }
+    public string PostDate { get; set; }
     public string Content { get; set; }
 }

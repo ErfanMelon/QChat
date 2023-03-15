@@ -14,7 +14,10 @@ builder.Services.AddApplicationServices();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(config =>
+{
+    config.EnableDetailedErrors = true;
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
