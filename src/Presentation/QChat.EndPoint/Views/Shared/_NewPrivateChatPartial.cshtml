@@ -1,0 +1,26 @@
+﻿@model NewPrivateChatCommand
+<div class="modal fade" id="NewPrivateChatModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form method="post" class="modal-content" enctype="multipart/form-data" onsubmit="CreatePrivateChat(event)">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">پیام به کاربر </h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <input type="hidden" asp-for="UserId" value=""/>
+                        <label class="form-label">نام کاربری :</label>
+                        <input asp-for="UserName" class="form-control" placeholder="نام کاربری را وارد کنید">
+                        <span asp-validation-for="UserName"></span>
+                        <span asp-validation-for="UserId"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
+                    <button type="submit" class="btn btn-primary"> پیام</button>
+                </div>
+            </form>
+
+        </div>
+    </div>

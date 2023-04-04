@@ -13,6 +13,7 @@ public class ChatDbContext : DbContext, IChatDbContext
     public virtual DbSet<Chat> Chats { get; set; }
     public virtual DbSet<Message> Messages { get; set; }
     public virtual DbSet<UserChat> UserChats { get; set; }
+    public virtual DbSet<PrivateChat> PrivateChats { get; set; }
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         BaseEntityConfig.QuantificationDefaultShadowProperties(ChangeTracker);

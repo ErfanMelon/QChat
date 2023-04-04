@@ -48,7 +48,14 @@
     <div class="col-4 rooms">
         <Ul>
             <li>
-                <button class="btn btn-success mb-2" style="width:100%;" data-toggle="modal" data-target="#NewChatModal">چت جدید</button>
+                <div class="row">
+                    <div class="col-6">
+                        <button class="btn btn-success mb-2" style="width:100%;" data-toggle="modal" data-target="#NewChatModal">گروه جدید</button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-success mb-2" style="width:100%;" data-toggle="modal" data-target="#NewPrivateChatModal">پیام جدید</button>
+                    </div>
+                </div>
                 <form>
                     <input type="text" placeholder="جستوجو کنید" class="form-control" />
                     <i class="fa fa-search"></i>
@@ -140,6 +147,44 @@
 
              });
             $('#NewChatModal .btn-primary').prop("disabled", false);
+        }
+
+        function CreatePrivateChat(event) {
+            event.preventDefault();
+            var formData = new FormData();
+            formData.append("UserId",event.target[1].value);
+            formData.append("UserName", event.target[2].value);
+             $.ajax({
+                type: "POST",
+                url: '@Url.Action("CreatePrivateChat", "Home")',
+                contentType: false,
+                 processData: false,
+                 enctype:"multipart/form-data",
+                 data: formData,
+                success: function (data) {
+
+                    if (data.isSuccess == true) {
+
+                        $('#chatList').append(`<li data-chatid="${data.value}">
+                    ${event.target[2].value}
+                    <img src="img/Default.jpg" />
+                    <span> لحظاتی پیش </span>
+                </li>`);
+                        $('#NewPrivateChatModal').modal('hide');
+                        $('#NewPrivateChatModal #UserName').val('');
+                    }
+                    else {
+
+                        alert(data.error);
+                    }
+
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status);
+                    alert(thrownError);
+                }
+
+             });
         }
     </script>
     <script>
@@ -273,5 +318,6 @@
 @section Modals
 {
     <partial name="_NewChatPartial" model="default!" />
+    <partial name="_NewPrivateChatPartial" model="default!" />
     <partial name="_ChatInfoPartial" model="default!" />
 }

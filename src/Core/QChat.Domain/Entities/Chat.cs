@@ -7,3 +7,8 @@ public class Chat : BaseEntity<long>
     public virtual ICollection<UserChat> UserChats { get; set; }
     public virtual ICollection<Message> Messages { get; set; }
 }
+public class PrivateChat : Chat
+{
+    public Guid? UserId1 { get; set; }
+    public Guid? UserId2 { get; set; }
+}

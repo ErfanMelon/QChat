@@ -9,6 +9,7 @@ public interface IChatDbContext
     DbSet<Chat> Chats { get; set; }
     DbSet<Message> Messages { get; set; }
     DbSet<UserChat> UserChats { get; set; }
+    DbSet<PrivateChat> PrivateChats { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

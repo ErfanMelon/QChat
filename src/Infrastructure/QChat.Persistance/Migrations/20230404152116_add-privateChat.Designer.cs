@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QChat.Persistance.Context;
 
@@ -11,9 +12,11 @@ using QChat.Persistance.Context;
 namespace QChat.Persistance.Migrations
 {
     [DbContext(typeof(ChatDbContext))]
-    partial class ChatDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230404152116_add-privateChat")]
+    partial class addprivateChat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,16 +167,6 @@ namespace QChat.Persistance.Migrations
             modelBuilder.Entity("QChat.Domain.Entities.PrivateChat", b =>
                 {
                     b.HasBaseType("QChat.Domain.Entities.Chat");
-
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UserId2")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasIndex("UserId1");
-
-                    b.HasIndex("UserId2");
 
                     b.HasDiscriminator().HasValue("p");
                 });

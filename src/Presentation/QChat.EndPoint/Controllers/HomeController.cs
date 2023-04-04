@@ -75,4 +75,11 @@ public class HomeController : Controller
         var result = await _mediator.Send(query);
         return result.ToJson();
     }
+    [HttpPost]
+    public async Task<IActionResult> CreatePrivateChat(NewPrivateChatCommand command)
+    {
+        command.UserId = _currentUserService.UserId;
+        var result = await _mediator.Send(command);
+        return result.ToJson();
+    }
 }
