@@ -27,13 +27,27 @@ public class GetChatsQuery : IRequest<Result<List<ChatBreifDto>>>
 
         public async Task<Result<List<ChatBreifDto>>> Handle(GetChatsQuery request, CancellationToken cancellationToken)
         {
-            var chats = _context.UserChats
+            var chatIds =await _context.UserChats
                 .AsNoTracking()
-                .Include(e => e.Chat)
                 .Where(e => e.UserId == request.UserId.ToGuid())
-                .Select(e => (ChatBreifDto)e.Chat);
-
-            return chats.ToList();
+                .Select(e=>e.ChatId).ToListAsync();
+            var chats =new List<ChatBreifDto>();
+            foreach (long id in chatIds)
+            {
+                var chat =await _context.Chats.AsNoTracking().Include(e=>e.UserChats).ThenInclude(e=>e.User).SingleAsync(e=>e.Id==id);
+                string title="";
+                if (chat is PrivateChat)
+                    title = chat.UserChats.DistinctBy(e => e.UserId).Single(e => e.UserId != request.UserId.ToGuid()).User.UserName;
+                else
+                    title = chat.Title;
+                chats.Add(new ChatBreifDto
+                {
+                    Id=chat.Id,
+                    Title=title,
+                    ImageSrc=chat.ImageSrc
+                });
+            }
+            return chats;
         }
     }
 }
@@ -42,14 +56,4 @@ public class ChatBreifDto
     public long Id { get; set; }
     public string? Title { get; set; }
     public string? ImageSrc { get; set; }
-    public static explicit operator ChatBreifDto(Chat chat)
-    {
-
-        return new ChatBreifDto
-        {
-            Id = chat.Id,
-            Title = chat.Title,
-            ImageSrc = chat.ImageSrc,
-        };
-    }
 }

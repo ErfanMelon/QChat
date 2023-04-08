@@ -44,7 +44,7 @@ public class AddUserToGroupCommand : IRequest<Result>
 
         private Task<bool> ChatExist(long? id, CancellationToken arg2)
         {
-            return _context.Chats.AnyAsync(e => e.Id == id.Value);
+            return _context.Chats.AnyAsync(e => e.Id == id.Value && !(e is PrivateChat));
         }
 
         private Task<bool> ValidUser(string userName, CancellationToken arg2)

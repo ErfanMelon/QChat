@@ -60,7 +60,7 @@ public class GetChatQuery : IRequest<Result<ChatDetailedDto>>
                 .ThenInclude(e => e.User)
                 .SingleAsync(e => e.UserId == request.UserId.ToGuid() && e.ChatId == request.ChatId.Value);
 
-            var chat = (ChatDetailedDto)userchat.Chat;
+            var chat = (ChatDetailedDto)userchat;
             return chat;
         }
     }
@@ -71,15 +71,29 @@ public class ChatDetailedDto
     public string? Title { get; set; }
     public string? ImageSrc { get; set; }
     public List<MessageBriefDto>? Messages { get; set; }
-    public static explicit operator ChatDetailedDto(Chat chat)
+    public static explicit operator ChatDetailedDto(UserChat userChat)
     {
-        return new ChatDetailedDto
-        {
-            Id = chat.Id,
-            ImageSrc = chat.ImageSrc,
-            Messages = chat.Messages.Select(e => (MessageBriefDto)e).ToList(),
-            Title = chat.Title
-        };
+        if (userChat.Chat is PrivateChat)
+            return new ChatDetailedDto
+            {
+                Id = userChat.Chat.Id,
+                ImageSrc = userChat.Chat.ImageSrc,
+                Messages = userChat.Chat.Messages.Select(e => (MessageBriefDto)e).ToList(),
+                Title = userChat.Chat
+                .Messages
+                .DistinctBy(e => e.UserId)
+                .SingleOrDefault(e => e.UserId != userChat.UserId)?
+                .User?
+                .UserName
+            };
+        else
+            return new ChatDetailedDto
+            {
+                Id = userChat.Chat.Id,
+                ImageSrc = userChat.Chat.ImageSrc,
+                Messages = userChat.Chat.Messages.Select(e => (MessageBriefDto)e).ToList(),
+                Title = userChat.Chat.Title
+            };
     }
 }
 public class MessageBriefDto
