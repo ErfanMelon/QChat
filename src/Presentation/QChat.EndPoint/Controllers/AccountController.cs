@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using QChat.Application.Services.Users.Commands;
@@ -11,11 +10,9 @@ namespace QChat.EndPoint.Controllers;
 public class AccountController : Controller
 {
     private readonly IMediator _mediator;
-    private readonly IMapper _mapper;
-    public AccountController(IMediator mediator, IMapper mapper)
+    public AccountController(IMediator mediator)
     {
         _mediator = mediator;
-        _mapper = mapper;
     }
     public IActionResult Index()
     {
@@ -43,7 +40,7 @@ public class AccountController : Controller
                 TempData["ModelState"] = ModelState;
                 return View("Index");
             }
-            return await Login(_mapper.Map<LoginUserCommand>(command));
+            return await Login(command);
         }
     }
     [HttpPost("/Login")]

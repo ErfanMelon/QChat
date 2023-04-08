@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using QChat.Application.Interfaces;
+using QChat.Application.Services.Users.Commands;
 using QChat.Common.Security;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
@@ -70,5 +71,13 @@ public class LoginUserCommand:IRequest<Result<ClaimsPrincipal>>
                 return Result.Success(principal);
             }
         }
+    }
+    public static implicit operator LoginUserCommand(CreateUserCommand command)
+    {
+        return new LoginUserCommand
+        {
+            Password=command.PassWord,
+            Username=command.UserName
+        };
     }
 }

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using QChat.Application.Interfaces;
@@ -31,7 +30,7 @@ public class NewMessageCommand : IRequest
 
             RuleFor(e => e.ChatId)
                 .NotEmpty().WithMessage("چت معتبر نیست")
-                .Must(c=>long.TryParse(c,out _)).WithMessage("چت معتبر نیست");
+                .Must(c => long.TryParse(c, out _)).WithMessage("چت معتبر نیست");
 
             RuleFor(e => e.MessageBody)
                 .NotEmpty().WithMessage("پیام را وارد کنید");
@@ -40,26 +39,34 @@ public class NewMessageCommand : IRequest
     public class Handler : IRequestHandler<NewMessageCommand>
     {
         private readonly IChatDbContext _context;
-        private readonly IMapper _mapper;
 
-        public Handler(IChatDbContext context, IMapper mapper)
+        public Handler(IChatDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task Handle(NewMessageCommand request, CancellationToken cancellationToken)
         {
             var chat = await _context.UserChats
                 .AsNoTracking()
-                .SingleOrDefaultAsync(e => e.UserId == request.UserId.ToGuid() && e.ChatId ==long.Parse(request.ChatId));
+                .SingleOrDefaultAsync(e => e.UserId == request.UserId.ToGuid() && e.ChatId == long.Parse(request.ChatId));
 
             if (chat == null)
                 return;
 
-            var message = _mapper.Map<Message>(request);
+            var message = (Message)request;
             await _context.Messages.AddAsync(message);
             await _context.SaveChangesAsync(cancellationToken);
         }
+    }
+    public static explicit operator Message(NewMessageCommand command)
+    {
+        return new Message
+        {
+            ChatId = long.Parse(command.ChatId),
+            Content = command.MessageBody,
+            PostDate = command.PostDate,
+            UserId = command.UserId.ToGuid()
+        };
     }
 }

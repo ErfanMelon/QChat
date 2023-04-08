@@ -1,10 +1,10 @@
-﻿using AutoMapper;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using QChat.Application.Interfaces;
 using QChat.Common.ExtentionMethods;
+using QChat.Domain.Entities;
 
 namespace QChat.Application.Services.Users.Queries;
 
@@ -19,12 +19,10 @@ public class GetChatsQuery : IRequest<Result<List<ChatBreifDto>>>
     public class Handler : IRequestHandler<GetChatsQuery, Result<List<ChatBreifDto>>>
     {
         private readonly IChatDbContext _context;
-        private readonly IMapper _mapper;
 
-        public Handler(IChatDbContext context, IMapper mapper)
+        public Handler(IChatDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<Result<List<ChatBreifDto>>> Handle(GetChatsQuery request, CancellationToken cancellationToken)
@@ -33,11 +31,9 @@ public class GetChatsQuery : IRequest<Result<List<ChatBreifDto>>>
                 .AsNoTracking()
                 .Include(e => e.Chat)
                 .Where(e => e.UserId == request.UserId.ToGuid())
-                .Select(e => e.Chat);
+                .Select(e => (ChatBreifDto)e.Chat);
 
-            var result = _mapper.ProjectTo<ChatBreifDto>(chats);
-
-            return result.ToList();
+            return chats.ToList();
         }
     }
 }
@@ -46,4 +42,14 @@ public class ChatBreifDto
     public long Id { get; set; }
     public string? Title { get; set; }
     public string? ImageSrc { get; set; }
+    public static explicit operator ChatBreifDto(Chat chat)
+    {
+
+        return new ChatBreifDto
+        {
+            Id = chat.Id,
+            Title = chat.Title,
+            ImageSrc = chat.ImageSrc,
+        };
+    }
 }

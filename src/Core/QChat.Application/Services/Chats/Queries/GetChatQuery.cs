@@ -1,10 +1,10 @@
-﻿using AutoMapper;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using QChat.Application.Interfaces;
 using QChat.Common.ExtentionMethods;
+using QChat.Domain.Entities;
 
 namespace QChat.Application.Services.Chats.Queries;
 
@@ -45,24 +45,22 @@ public class GetChatQuery : IRequest<Result<ChatDetailedDto>>
     public class Handler : IRequestHandler<GetChatQuery, Result<ChatDetailedDto>>
     {
         private readonly IChatDbContext _context;
-        private readonly IMapper _mapper;
 
-        public Handler(IChatDbContext context, IMapper mapper)
+        public Handler(IChatDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<Result<ChatDetailedDto>> Handle(GetChatQuery request, CancellationToken cancellationToken)
         {
             var userchat = await _context.UserChats
                 .AsNoTracking()
-                .Include(e=>e.Chat)
-                .ThenInclude(e=>e.Messages)
-                .ThenInclude(e=>e.User)
+                .Include(e => e.Chat)
+                .ThenInclude(e => e.Messages)
+                .ThenInclude(e => e.User)
                 .SingleAsync(e => e.UserId == request.UserId.ToGuid() && e.ChatId == request.ChatId.Value);
 
-            var chat = _mapper.Map<ChatDetailedDto>(userchat.Chat);
+            var chat = (ChatDetailedDto)userchat.Chat;
             return chat;
         }
     }
@@ -73,10 +71,29 @@ public class ChatDetailedDto
     public string? Title { get; set; }
     public string? ImageSrc { get; set; }
     public List<MessageBriefDto>? Messages { get; set; }
+    public static explicit operator ChatDetailedDto(Chat chat)
+    {
+        return new ChatDetailedDto
+        {
+            Id = chat.Id,
+            ImageSrc = chat.ImageSrc,
+            Messages = chat.Messages.Select(e => (MessageBriefDto)e).ToList(),
+            Title = chat.Title
+        };
+    }
 }
 public class MessageBriefDto
 {
     public string Username { get; set; }
     public string PostDate { get; set; }
     public string Content { get; set; }
+    public static explicit operator MessageBriefDto(Message message)
+    {
+        return new MessageBriefDto
+        {
+            Content = message.Content,
+            PostDate = message.PostDate.ToAproximateDate(),
+            Username = message.User.UserName
+        };
+    }
 }

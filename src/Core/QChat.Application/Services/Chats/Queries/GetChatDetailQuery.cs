@@ -1,10 +1,10 @@
-﻿using AutoMapper;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using QChat.Application.Interfaces;
 using QChat.Common.ExtentionMethods;
+using QChat.Domain.Entities;
 
 namespace QChat.Application.Services.Chats.Queries;
 
@@ -46,12 +46,10 @@ public class GetChatDetailQuery : IRequest<Result<ChatInfoDto>>
     public class Handler : IRequestHandler<GetChatDetailQuery, Result<ChatInfoDto>>
     {
         private readonly IChatDbContext _context;
-        private readonly IMapper _mapper;
 
-        public Handler(IChatDbContext context, IMapper mapper)
+        public Handler(IChatDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<Result<ChatInfoDto>> Handle(GetChatDetailQuery request, CancellationToken cancellationToken)
@@ -63,7 +61,7 @@ public class GetChatDetailQuery : IRequest<Result<ChatInfoDto>>
                 .ThenInclude(e => e.User)
                 .SingleAsync(e => e.Id == request.ChatId.Value);
 
-            var chatInfo = _mapper.Map<ChatInfoDto>(chat);
+            var chatInfo = (ChatInfoDto)chat;
 
             return chatInfo;
         }
@@ -72,4 +70,11 @@ public class GetChatDetailQuery : IRequest<Result<ChatInfoDto>>
 public class ChatInfoDto
 {
     public List<string> Members { get; set; }
+    public static explicit operator ChatInfoDto(Chat chat)
+    {
+        return new ChatInfoDto
+        {
+            Members = chat.UserChats.Select(e => e.User.UserName).ToList()
+        };
+    }
 }

@@ -19,7 +19,7 @@ public static class ApplicationServices
             config.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         });
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
         services.AddAuthentication(config =>
         {
             config.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;

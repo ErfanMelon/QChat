@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -42,19 +41,17 @@ public class NewChatCommand : IRequest<Result<long>>
     public class Handler : IRequestHandler<NewChatCommand, Result<long>>
     {
         private readonly IChatDbContext _context;
-        private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public Handler(IChatDbContext context, IMapper mapper, IMediator mediator)
+        public Handler(IChatDbContext context, IMediator mediator)
         {
             _context = context;
-            _mapper = mapper;
             _mediator = mediator;
         }
 
         public async Task<Result<long>> Handle(NewChatCommand request, CancellationToken cancellationToken)
         {
-            var newChat = _mapper.Map<Chat>(request);
+            var newChat = (Chat)request;
 
             if (request.Image != null)
             {
@@ -82,5 +79,12 @@ public class NewChatCommand : IRequest<Result<long>>
 
             return newChat.Id;
         }
+    }
+    public static explicit operator Chat(NewChatCommand command)
+    {
+        return new Chat
+        {
+            Title=command.Title,
+        };
     }
 }

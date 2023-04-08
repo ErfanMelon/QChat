@@ -1,9 +1,9 @@
-﻿using AutoMapper;
-using CSharpFunctionalExtensions;
+﻿using CSharpFunctionalExtensions;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using QChat.Application.Interfaces;
+using QChat.Common.Security;
 using QChat.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
@@ -53,22 +53,28 @@ public class CreateUserCommand : IRequest<Result>
     public class Handler : IRequestHandler<CreateUserCommand, Result>
     {
         private readonly IChatDbContext _context;
-        private readonly IMapper _mapper;
 
-        public Handler(IChatDbContext context, IMapper mapper)
+        public Handler(IChatDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<Result> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var user = _mapper.Map<User>(request);
+            var user = (User)request;
 
             await _context.Users.AddAsync(user, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }
+    }
+    public static explicit operator User(CreateUserCommand command)
+    {
+        return new User
+        {
+            Password= PasswordHasher.EncodePasswordMd5(command.PassWord),
+            UserName=command.UserName
+        };
     }
 }
