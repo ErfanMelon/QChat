@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using QChat.Application.Interfaces;
 using QChat.Application.Services.Chats.Commands;
 using QChat.Application.Services.Chats.Queries;
+using QChat.Application.Services.Users.Queries;
 using QChat.EndPoint.Services;
 
 namespace QChat.EndPoint.Hubs;
@@ -32,5 +33,15 @@ public class DefaultHub : Hub
         var message = new NewMessageCommand(_currentUserService.UserId, chatId, msg);
         await _mediator.Send(message);
         await Clients.Group(chatId.ToString()).SendAsync("UpdateChat", chatId);
+    }
+    public async Task SearchChat(string? searchKey)
+    {
+        var chats = await _mediator.Send(new SearchChatQuery(searchKey, _currentUserService.UserId));
+        await Clients.Caller.SendAsync("SearchResult", chats.ToJson().Value);
+    }
+    public async Task LoadChats()
+    {
+        var chats = await _mediator.Send(new GetChatsQuery(_currentUserService.UserId));
+        await Clients.Caller.SendAsync("SearchResult", chats.ToJson().Value);
     }
 }
