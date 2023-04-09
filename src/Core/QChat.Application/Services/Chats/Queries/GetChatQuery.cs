@@ -53,15 +53,36 @@ public class GetChatQuery : IRequest<Result<ChatDetailedDto>>
 
         public async Task<Result<ChatDetailedDto>> Handle(GetChatQuery request, CancellationToken cancellationToken)
         {
-            var userchat = await _context.UserChats
-                .AsNoTracking()
-                .Include(e => e.Chat)
-                .ThenInclude(e => e.Messages)
-                .ThenInclude(e => e.User)
-                .SingleAsync(e => e.UserId == request.UserId.ToGuid() && e.ChatId == request.ChatId.Value);
+            //var userchat = await _context.UserChats
+            //    .AsNoTracking()
+            //    .Include(e => e.Chat)
+            //    .ThenInclude(e => e.Messages)
+            //    .ThenInclude(e => e.User)
+            //    .SingleAsync(e => e.UserId == request.UserId.ToGuid() && e.ChatId == request.ChatId.Value);
 
-            var chat = (ChatDetailedDto)userchat;
-            return chat;
+            //var chat = (ChatDetailedDto)userchat;
+            //return chat;
+            var chat = await _context.Chats
+                .AsNoTracking()
+                .Include(e=>e.UserChats)
+                .ThenInclude(e=>e.User)
+                .Include(e => e.Messages)
+                .ThenInclude(e => e.User)
+                .SingleAsync(e => e.Id == request.ChatId);
+
+            ChatDetailedDto result = new ChatDetailedDto
+            {
+                Id = chat.Id,
+                ImageSrc = chat.ImageSrc,
+                Messages = chat.Messages.Select(e => (MessageBriefDto)e).ToList()
+            };
+
+            if (chat is PrivateChat)
+                result.Title = chat.UserChats.First(e => e.UserId != request.UserId.ToGuid()).User.UserName;
+            else
+                result.Title = chat.Title;
+
+            return result;
         }
     }
 }
