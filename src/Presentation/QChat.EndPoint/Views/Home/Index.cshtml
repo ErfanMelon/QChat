@@ -70,7 +70,7 @@
                     foreach (var chat in ViewBag.Chats.Value as List<ChatBreifDto>)
                     {
                         <li data-chatid="@chat.Id" onclick="LoadChat('@chat.Id')">
-                            @chat.Title
+                            <label>@chat.Title</label>
                             @if (chat.ImageSrc != null)
                             {
                                 <img src="/@chat.ImageSrc" />
@@ -103,8 +103,12 @@
             .build();
 
         connection.on("Connected", ConnectedToHub);
-        
 
+        $(document).ready(function () {
+            if (Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+        });
         async function StartConnection() {
             try {
                 await connection.start();
@@ -173,7 +177,7 @@
                     if (data.isSuccess == true) {
 
                         $('#chatList').append(`<li data-chatid="${data.value}" onclick="LoadChat('${data.value}')">
-                    ${event.target[1].value}
+                    <label>${event.target[1].value}</label>
                     <img src="img/Default.jpg" />
                     <span>  </span>
                 </li>`);
@@ -213,7 +217,7 @@
                     if (data.isSuccess == true) {
 
                         $('#chatList').append(`<li data-chatid="${data.value}" onclick="LoadChat('${data.value}')">
-                    ${event.target[2].value}
+                    <label>${event.target[2].value}</label>
                     <img src="img/Default.jpg" />
                     <span>  </span>
                 </li>`);
@@ -327,6 +331,9 @@
                         }
                         $(`#chatList li[data-chatid="${id}"] span`).text(data.value.messages[i].postDate);
                     }
+                    $('#currentChat .chat:last').attr('id', 'LastMessageInThisChat');
+                    document.getElementById('LastMessageInThisChat').scrollIntoView();
+                    $('#currentChat .chat:last').removeAttr('id');
                 }
                 else {
                     alert(data.error);
@@ -346,13 +353,16 @@
         }
 
         $('#btnSendMessage').on('click', function () {
+            sendMessage();
+        })
+        function sendMessage() {
             var msg = $("#txtMessage").val();
             if (msg) {
                 connection.invoke('SendMessage', msg, $('#ChatOption').attr('data-chatId'));
                 $("#txtMessage").val('');
+                $("#txtMessage").focus();
             }
-        })
-
+        }
         function SearchChat(event) {
             event.preventDefault();
             var text = event.target[0].value;
@@ -372,7 +382,7 @@
                         imgAddress = '/' + result.value[i].imageSrc;
                     }
                     $('#chatList').append(`<li data-chatid="${result.value[i].id}" onclick="LoadChat('${result.value[i].id}')">
-                            ${result.value[i].title}
+                            <label>${result.value[i].title}</label>
                                 <img src="${imgAddress}" />
                             <span> ${result.value[i].lastMessageDate} </span>
                         </li>`);
@@ -381,6 +391,22 @@
             else {
                 console.log(result);
                 alert(result.error);
+            }
+        });
+        connection.on('SendNotification', function (name, chatId, msg) {
+            if (CHATID !== chatId) {
+                if (Notification.permission === 'granted') {
+                    var chatTitle = $(`#chatList li[data-chatid="${chatId}"] label`).text();
+                    var notification = new Notification(chatTitle,
+                    {
+                        body: `${name} : ${msg}`
+                        });
+            }
+            }
+        });
+        $('#txtMessage').keyup(function (e) {
+            if (e.which == 13) {
+                sendMessage();
             }
         });
     </script>

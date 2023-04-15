@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using CSharpFunctionalExtensions;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using QChat.Application.Interfaces;
@@ -7,7 +8,7 @@ using QChat.Domain.Entities;
 
 namespace QChat.Application.Services.Chats.Commands;
 
-public class NewMessageCommand : IRequest
+public class NewMessageCommand : IRequest<Maybe<List<string>>>
 {
     public NewMessageCommand(string? userId, string? chatId, string? messageBody)
     {
@@ -36,7 +37,7 @@ public class NewMessageCommand : IRequest
                 .NotEmpty().WithMessage("پیام را وارد کنید");
         }
     }
-    public class Handler : IRequestHandler<NewMessageCommand>
+    public class Handler : IRequestHandler<NewMessageCommand, Maybe<List<string>>>
     {
         private readonly IChatDbContext _context;
 
@@ -45,18 +46,23 @@ public class NewMessageCommand : IRequest
             _context = context;
         }
 
-        public async Task Handle(NewMessageCommand request, CancellationToken cancellationToken)
+        public async Task<Maybe<List<string>>> Handle(NewMessageCommand request, CancellationToken cancellationToken)
         {
             var chat = await _context.UserChats
                 .AsNoTracking()
                 .SingleOrDefaultAsync(e => e.UserId == request.UserId.ToGuid() && e.ChatId == long.Parse(request.ChatId));
 
             if (chat == null)
-                return;
+                return Maybe<List<string>>.None;
 
             var message = (Message)request;
             await _context.Messages.AddAsync(message);
             await _context.SaveChangesAsync(cancellationToken);
+            return await _context
+                .UserChats
+                .Where(e => e.ChatId == long.Parse(request.ChatId))
+                .Select(e => e.UserId.ToString().ToLower())
+                .ToListAsync();
         }
     }
     public static explicit operator Message(NewMessageCommand command)

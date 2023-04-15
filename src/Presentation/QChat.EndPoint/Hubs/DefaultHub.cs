@@ -19,7 +19,7 @@ public class DefaultHub : Hub
     }
     public override async Task OnConnectedAsync()
     {
-        await Clients.Caller.SendAsync("Connected", _currentUserService.Name,Context.ConnectionId);
+        await Clients.Caller.SendAsync("Connected", _currentUserService.Name, Context.ConnectionId);
         await base.OnConnectedAsync();
     }
     public async Task NewGroup(NewChatCommand command)
@@ -31,8 +31,10 @@ public class DefaultHub : Hub
     public async Task SendMessage(string msg, string chatId)
     {
         var message = new NewMessageCommand(_currentUserService.UserId, chatId, msg);
-        await _mediator.Send(message);
+        var result = await _mediator.Send(message);
         await Clients.Group(chatId.ToString()).SendAsync("UpdateChat", chatId);
+        if(result.HasValue)
+        await Clients.Users(result.Value).SendAsync("SendNotification", _currentUserService.Name, chatId, msg);
     }
     public async Task SearchChat(string? searchKey)
     {
