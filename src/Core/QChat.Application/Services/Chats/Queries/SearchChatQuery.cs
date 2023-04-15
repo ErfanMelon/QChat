@@ -41,23 +41,32 @@ public class SearchChatQuery : IRequest<Result<List<ChatBreifDto>>>
 
         public async Task<Result<List<ChatBreifDto>>> Handle(SearchChatQuery request, CancellationToken cancellationToken)
         {
-            var chatIds =await _context.UserChats
-                .AsNoTracking()
+            string searchKey = request.SearchKey.ToLower();
+            var chatIds = await _context.UserChats
                 .Include(e => e.Chat)
+                .ThenInclude(e => e.UserChats)
+                .ThenInclude(e => e.User)
                 .Where(e => e.UserId == request.UserId.ToGuid())
-                .Where(e => e.Chat.Title.ToLower().Contains(request.SearchKey.ToLower()))
-                .Select(e=>e.ChatId)
+                .Where(e => e.Chat.Title.Contains(searchKey) || (e.Chat is PrivateChat && e.Chat.UserChats.Any(s => s.User.UserName.Contains(searchKey))))
+                .Select(r => r.ChatId)
                 .ToListAsync();
 
-            var chats = new List<ChatBreifDto>();
+            List<ChatBreifDto> chats = new();
             foreach (long id in chatIds)
             {
-                var chat = await _context.Chats.AsNoTracking().Include(e => e.UserChats).ThenInclude(e => e.User).SingleAsync(e => e.Id == id);
+                var chat = await _context.Chats
+                    .AsNoTracking()
+                    .Include(e => e.UserChats)
+                    .ThenInclude(e => e.User)
+                    .SingleAsync(e => e.Id == id);
                 string title = "";
                 if (chat is PrivateChat)
-                    title = chat.UserChats.DistinctBy(e => e.UserId).Single(e => e.UserId != request.UserId.ToGuid()).User.UserName;
+                    title = chat.UserChats
+                        .DistinctBy(e => e.UserId)
+                        .Single(e => e.UserId != request.UserId.ToGuid()).User.UserName;
                 else
                     title = chat.Title;
+
                 chats.Add(new ChatBreifDto
                 {
                     Id = chat.Id,
