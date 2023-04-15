@@ -30,11 +30,19 @@ public class GetChatsQuery : IRequest<Result<List<ChatBreifDto>>>
             var chatIds =await _context.UserChats
                 .AsNoTracking()
                 .Where(e => e.UserId == request.UserId.ToGuid())
-                .Select(e=>e.ChatId).ToListAsync();
+                .Select(e=>e.ChatId)
+                .ToListAsync();
+
             var chats =new List<ChatBreifDto>();
             foreach (long id in chatIds)
             {
-                var chat =await _context.Chats.AsNoTracking().Include(e=>e.UserChats).ThenInclude(e=>e.User).SingleAsync(e=>e.Id==id);
+                var chat =await _context.Chats
+                    .AsNoTracking()
+                    .Include(e=>e.Messages)
+                    .Include(e=>e.UserChats)
+                    .ThenInclude(e=>e.User)
+                    .SingleAsync(e=>e.Id==id);
+
                 string title="";
                 if (chat is PrivateChat)
                     title = chat.UserChats.DistinctBy(e => e.UserId).Single(e => e.UserId != request.UserId.ToGuid()).User.UserName;
@@ -44,7 +52,8 @@ public class GetChatsQuery : IRequest<Result<List<ChatBreifDto>>>
                 {
                     Id=chat.Id,
                     Title=title,
-                    ImageSrc=chat.ImageSrc
+                    ImageSrc=chat.ImageSrc,
+                    LastMessageDate=chat.Messages.LastOrDefault()?.PostDate.ToShamsi()
                 });
             }
             return chats;
@@ -56,4 +65,5 @@ public class ChatBreifDto
     public long Id { get; set; }
     public string? Title { get; set; }
     public string? ImageSrc { get; set; }
+    public string? LastMessageDate { get; set; }
 }

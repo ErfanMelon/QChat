@@ -1,6 +1,9 @@
 ﻿@{
     ViewData["Title"] = "چت";
 }
+@section Css{
+    <link href="~/css/sweetalert2.min.css" rel="stylesheet" />
+}
 <div class="row">
     <div class="col-8 chat-content">
         <div id="currentChat" style="display:none">
@@ -57,7 +60,7 @@
                     </div>
                 </div>
                 <form onsubmit="SearchChat(event)">
-                    <input type="text" placeholder="جستوجو کنید" class="form-control"/>
+                    <input type="text" placeholder="جستوجو کنید" class="form-control" />
                     <i class="fa fa-search"></i>
                 </form>
             </li>
@@ -76,7 +79,7 @@
                             {
                                 <img src="/img/Default.jpg" />
                             }
-                            <span> لحظاتی پیش </span>
+                            <span> @chat.LastMessageDate </span>
                         </li>
                     }
                 }
@@ -88,6 +91,8 @@
 {
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/sweetalert2.all.min.js"></script>
+
     <script>
         var UserName = "USERNAME";
         var CHATID = 0;
@@ -98,12 +103,54 @@
             .build();
 
         connection.on("Connected", ConnectedToHub);
-        connection.start();
+        
 
+        async function StartConnection() {
+            try {
+                await connection.start();
+            } catch {
+                Swal.fire({
+                    title: 'اتصال قطع شد',
+                    text: 'اتصال مجدد در 5 ثانیه',
+                    timer: 5000,
+                    confirmButtonText: 'اتصال',
+                    showConfirmButton:true,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                        setTimeout(StartConnection, 5000);
+                    },
+                    willClose: () => {
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        StartConnection();
+                    }
+                });
+            }
+        }
+        connection.onclose(StartConnection);
+        StartConnection();
         function ConnectedToHub(username,id) {
             UserName = username;
             console.log(`Hello ${username}`);
             sessionId = id;
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            Toast.fire({
+                icon: 'success',
+                title: `${username} متصل شدید`
+            });
         }
 
         function CreateGroup(event) {
@@ -128,7 +175,7 @@
                         $('#chatList').append(`<li data-chatid="${data.value}" onclick="LoadChat('${data.value}')">
                     ${event.target[1].value}
                     <img src="img/Default.jpg" />
-                    <span> لحظاتی پیش </span>
+                    <span>  </span>
                 </li>`);
                         $('#NewChatModal').modal('hide');
                         $('#NewChatModal #GroupImage').val('');
@@ -168,7 +215,7 @@
                         $('#chatList').append(`<li data-chatid="${data.value}" onclick="LoadChat('${data.value}')">
                     ${event.target[2].value}
                     <img src="img/Default.jpg" />
-                    <span> لحظاتی پیش </span>
+                    <span>  </span>
                 </li>`);
                         $('#NewPrivateChatModal').modal('hide');
                         $('#NewPrivateChatModal #UserName').val('');
@@ -278,6 +325,7 @@
                     </div>
                 </div>`);
                         }
+                        $(`#chatList li[data-chatid="${id}"] span`).text(data.value.messages[i].postDate);
                     }
                 }
                 else {
@@ -326,7 +374,7 @@
                     $('#chatList').append(`<li data-chatid="${result.value[i].id}" onclick="LoadChat('${result.value[i].id}')">
                             ${result.value[i].title}
                                 <img src="${imgAddress}" />
-                            <span> لحظاتی پیش </span>
+                            <span> ${result.value[i].lastMessageDate} </span>
                         </li>`);
                 }
             }

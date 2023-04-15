@@ -1,4 +1,6 @@
-﻿namespace QChat.Common.ExtentionMethods;
+﻿using System.Globalization;
+
+namespace QChat.Common.ExtentionMethods;
 
 public static class Convertor
 {
@@ -34,5 +36,11 @@ public static class Convertor
             result = timeSpan.Days > 365 ? $"{timeSpan.Days / 365} سال قبل " : "سال پیش";
 
         return result;
+    }
+    public static string ToShamsi(this DateTime dateTime)
+    {
+        PersianCalendar pc = new();
+        return $"{pc.GetYear(dateTime)}-{pc.GetMonth(dateTime)}-{pc.GetDayOfMonth(dateTime)} " +
+            $"{dateTime.Hour}:{dateTime.Minute}";
     }
 }

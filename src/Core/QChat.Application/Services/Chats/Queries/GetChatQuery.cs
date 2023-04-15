@@ -53,15 +53,6 @@ public class GetChatQuery : IRequest<Result<ChatDetailedDto>>
 
         public async Task<Result<ChatDetailedDto>> Handle(GetChatQuery request, CancellationToken cancellationToken)
         {
-            //var userchat = await _context.UserChats
-            //    .AsNoTracking()
-            //    .Include(e => e.Chat)
-            //    .ThenInclude(e => e.Messages)
-            //    .ThenInclude(e => e.User)
-            //    .SingleAsync(e => e.UserId == request.UserId.ToGuid() && e.ChatId == request.ChatId.Value);
-
-            //var chat = (ChatDetailedDto)userchat;
-            //return chat;
             var chat = await _context.Chats
                 .AsNoTracking()
                 .Include(e=>e.UserChats)
@@ -127,7 +118,7 @@ public class MessageBriefDto
         return new MessageBriefDto
         {
             Content = message.Content,
-            PostDate = message.PostDate.ToAproximateDate(),
+            PostDate = message.PostDate.ToShamsi(),
             Username = message.User.UserName
         };
     }
