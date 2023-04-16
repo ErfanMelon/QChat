@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using QChat.Application.Interfaces;
 using QChat.Application.Services.Chats.Commands;
 using QChat.Application.Services.Chats.Queries;
+using QChat.Application.Services.Messages.Commands;
 using QChat.Application.Services.Users.Queries;
 using QChat.EndPoint.Services;
 
@@ -33,8 +34,8 @@ public class DefaultHub : Hub
         var message = new NewMessageCommand(_currentUserService.UserId, chatId, msg);
         var result = await _mediator.Send(message);
         await Clients.Group(chatId.ToString()).SendAsync("UpdateChat", chatId);
-        if(result.HasValue)
-        await Clients.Users(result.Value).SendAsync("SendNotification", _currentUserService.Name, chatId, msg);
+        if (result.HasValue)
+            await Clients.Users(result.Value).SendAsync("SendNotification", _currentUserService.Name, chatId, msg);
     }
     public async Task SearchChat(string? searchKey)
     {
@@ -45,5 +46,12 @@ public class DefaultHub : Hub
     {
         var chats = await _mediator.Send(new GetChatsQuery(_currentUserService.UserId));
         await Clients.Caller.SendAsync("SearchResult", chats.ToJson().Value);
+    }
+    public async Task DeleteMessage(string? chatId, string? messageId)
+    {
+        var result = await _mediator.Send(new DeleteMessageCommand(_currentUserService.UserId, messageId, chatId));
+        await Clients.Caller.SendAsync("ShowResult",result.ToJson().Value);
+        if (result.IsSuccess)
+            await Clients.Group(chatId).SendAsync("UpdateChat", chatId);
     }
 }

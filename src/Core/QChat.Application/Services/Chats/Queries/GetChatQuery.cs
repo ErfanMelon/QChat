@@ -110,6 +110,7 @@ public class ChatDetailedDto
 }
 public class MessageBriefDto
 {
+    public string Id { get; set; }
     public string Username { get; set; }
     public string PostDate { get; set; }
     public string Content { get; set; }
@@ -119,7 +120,8 @@ public class MessageBriefDto
         {
             Content = message.Content,
             PostDate = message.PostDate.ToShamsi(),
-            Username = message.User.UserName
+            Username = message.User.UserName,
+            Id=message.Id.ToString()
         };
     }
 }
