@@ -14,6 +14,7 @@
             <div class="chats"></div>
             <div class="footer">
                 <div>
+
                     <input type="text" class="form-control" id="txtMessage" placeholder="متن خود را وارد کنید">
                     <button class="btn btn-success" id="btnSendMessage" type="button">
                         ارسال
@@ -27,11 +28,14 @@
         <Ul>
             <li>
                 <div class="row">
-                    <div class="col-6">
-                        <button class="btn btn-success mb-2" style="width:100%;" data-toggle="modal" data-target="#NewChatModal">گروه جدید</button>
+                    <div class="col-4">
+                        <button class="btn btn-success mb-2" style="width:100%;" data-toggle="modal" data-target="#NewChatModal">گروه جدید <i class="fa fa-group" aria-hidden="true"></i></button>
                     </div>
-                    <div class="col-6">
-                        <button class="btn btn-success mb-2" style="width:100%;" data-toggle="modal" data-target="#NewPrivateChatModal">پیام جدید</button>
+                    <div class="col-4">
+                        <button class="btn btn-success mb-2" style="width:100%;" data-toggle="modal" data-target="#NewPrivateChatModal">پیام جدید <i class="fa fa-user" aria-hidden="true"></i></button>
+                    </div>
+                    <div class="col-4">
+                        <a class="btn btn-warning mb-2" style="width:100%;" asp-controller="Account" asp-action="Logout">خروج  <i class="fa fa-key" aria-hidden="true"></i></a>
                     </div>
                 </div>
                 <form onsubmit="SearchChat(event)">
@@ -220,7 +224,7 @@ function AddUserToGroup(event) {
                     if (data.value.messages[i].username === UserName) {
                         $('#currentChat .chats').append(`
                 <div class="chat-me row">
-                                <div class="chat col-2" oncontextmenu="messageOptions('${data.value.messages[i].id}')">
+                                <div class="chat col-2" oncontextmenu="messageOptions('${data.value.messages[i].id}');return false;">
                                     <small class="text-white">${data.value.messages[i].username}</small>
                                     <p>${data.value.messages[i].content}</p>
                                     <span>${data.value.messages[i].postDate}</span>
@@ -260,7 +264,21 @@ function AddUserToGroup(event) {
             alert(thrownError);
         }
     });
-}
+        } connection.on('SendNotification', function (name, chatId, msg) {
+            if (CHATID !== chatId) {
+                console.log(CHATID)
+                console.log(chatId)
+                console.log(CHATID !== chatId)
+
+                if (Notification.permission === 'granted') {
+                    var chatTitle = $(`#chatList li[data-chatid="${chatId}"] label`).text();
+                    var notification = new Notification(chatTitle,
+                        {
+                            body: `${name} : ${msg}`
+                        });
+                }
+            }
+        });
     </script>
 }
 @section Modals

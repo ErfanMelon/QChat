@@ -73,7 +73,7 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home");
         }
     }
-    [HttpPost("/Logout")]
+    [HttpGet("/Logout")]
     public async Task<IActionResult> Logout()
     {
         if (User.Identity.IsAuthenticated)

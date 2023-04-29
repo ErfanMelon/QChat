@@ -109,17 +109,7 @@ connection.on("SearchResult", function (result) {
         alert(result.error);
     }
 });
-connection.on('SendNotification', function (name, chatId, msg) {
-    if (CHATID !== chatId) {
-        if (Notification.permission === 'granted') {
-            var chatTitle = $(`#chatList li[data-chatid="${chatId}"] label`).text();
-            var notification = new Notification(chatTitle,
-                {
-                    body: `${name} : ${msg}`
-                });
-        }
-    }
-});
+
 $('#txtMessage').keyup(function (e) {
     if (e.which == 13) {
         sendMessage();
