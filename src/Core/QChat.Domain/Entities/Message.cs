@@ -8,4 +8,5 @@ public class Message:BaseEntity
     public string Content { get; set; }
     public virtual Chat Chat { get; set; }
     public long ChatId { get; set; }
+    public string? FileSrc { get; set; }
 }

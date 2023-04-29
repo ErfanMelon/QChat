@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.SignalR;
 using QChat.Application.Interfaces;
 using QChat.Application.Services.Chats.Commands;
 using QChat.Application.Services.Chats.Queries;
+using QChat.Application.Services.Messages.Commands;
 using QChat.Application.Services.Users.Queries;
+using QChat.Domain.Entities;
 using QChat.EndPoint.Hubs;
 using QChat.EndPoint.Models;
 using QChat.EndPoint.Services;
@@ -53,7 +55,7 @@ public class HomeController : Controller
         return result.ToJson();
     }
     [HttpPost]
-    public async Task<IActionResult> GetChat(long? chatId, long? oldChatId,string? connectionId)
+    public async Task<IActionResult> GetChat(long? chatId, long? oldChatId, string? connectionId)
     {
         var query = new GetChatQuery(chatId, _currentUserService.UserId);
         var result = await _mediator.Send(query);
@@ -81,5 +83,18 @@ public class HomeController : Controller
         command.UserId = _currentUserService.UserId;
         var result = await _mediator.Send(command);
         return result.ToJson();
+    }
+    [HttpPost]
+    public async Task<IActionResult> SendMedia(NewMediaMessageCommand command)
+    {
+        command.Media = Request.Form.Files.FirstOrDefault();
+        command.UserId = _currentUserService.UserId;
+        var result = await _mediator.Send(command);
+        if (result.HasValue)
+        {
+            await _hubContext.Clients.Group(command.ChatId).SendAsync("UpdateChat", command.ChatId);
+            await _hubContext.Clients.Users(result.Value).SendAsync("SendNotification", _currentUserService.Name, command.ChatId, command.Media.FileName);
+        }
+        return Json("OK");
     }
 }

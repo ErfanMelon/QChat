@@ -114,6 +114,8 @@ public class MessageBriefDto
     public string Username { get; set; }
     public string PostDate { get; set; }
     public string Content { get; set; }
+    public bool IsFile { get; set; } = false;
+    public string FilePath { get; set; }
     public static explicit operator MessageBriefDto(Message message)
     {
         return new MessageBriefDto
@@ -121,7 +123,9 @@ public class MessageBriefDto
             Content = message.Content,
             PostDate = message.PostDate.ToShamsi(),
             Username = message.User.UserName,
-            Id=message.Id.ToString()
+            Id=message.Id.ToString(),
+            IsFile=message.FileSrc!=null,
+            FilePath= message.FileSrc
         };
     }
 }

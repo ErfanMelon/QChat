@@ -7,7 +7,6 @@ var connection = new signalR
     .build();
 
 connection.on("Connected", ConnectedToHub);
-
 $(document).ready(function () {
     if (Notification.permission !== "granted") {
         Notification.requestPermission();
@@ -69,6 +68,9 @@ function RecieveMessage(chatId) {
 }
 
 $('#btnSendMessage').on('click', function () {
+    if (document.getElementById("fMedia").files.length > 0) {
+        SendMedia();
+    }
     sendMessage();
 })
 function sendMessage() {

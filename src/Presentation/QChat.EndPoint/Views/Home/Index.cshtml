@@ -14,8 +14,11 @@
             <div class="chats"></div>
             <div class="footer">
                 <div>
-
+                    <a class="fileUpload">
+                        <i class="fa fa-upload"></i>
+                    </a>
                     <input type="text" class="form-control" id="txtMessage" placeholder="متن خود را وارد کنید">
+                    <input type="file" class="form-control" style="display:none" id="fMedia">
                     <button class="btn btn-success" id="btnSendMessage" type="button">
                         ارسال
                         <i class="fa fa-send"></i>
@@ -222,7 +225,22 @@ function AddUserToGroup(event) {
                 $('#currentChat .header h2').text(data.value.title); // change chat title
                 for (i in data.value.messages) {
                     if (data.value.messages[i].username === UserName) {
-                        $('#currentChat .chats').append(`
+                        if (data.value.messages[i].isFile) {
+                            $('#currentChat .chats').append(`
+                <div class="chat-me row">
+                                <div class="chat col-2" oncontextmenu="messageOptions('${data.value.messages[i].id}');return false;">
+                                    <small class="text-white">${data.value.messages[i].username}</small>
+                                    <p><a href='/${data.value.messages[i].filePath}' target="_blank">${data.value.messages[i].content}</a></p>
+                                    <span>${data.value.messages[i].postDate}</span>
+                                </div>
+                                <div class="col-10" style="display:none" id="message-option-list-${data.value.messages[i].id}">
+                                    <button class="btn btn-danger" onclick="DeleteMessage('${data.value.messages[i].id}')"> حذف </button>
+                                    <button class="btn btn-white" onclick="$('#message-option-list-${data.value.messages[i].id}').css('display','none')">بستن</button>
+                                </div>
+                        </div>`);
+                        }
+                        else {
+                            $('#currentChat .chats').append(`
                 <div class="chat-me row">
                                 <div class="chat col-2" oncontextmenu="messageOptions('${data.value.messages[i].id}');return false;">
                                     <small class="text-white">${data.value.messages[i].username}</small>
@@ -233,10 +251,26 @@ function AddUserToGroup(event) {
                                     <button class="btn btn-danger" onclick="DeleteMessage('${data.value.messages[i].id}')"> حذف </button>
                                     <button class="btn btn-white" onclick="$('#message-option-list-${data.value.messages[i].id}').css('display','none')">بستن</button>
                                 </div>
-                </div>`);
+                        </div>`);
+                        }
                     }
                     else {
-                        $('#currentChat .chats').append(`
+                        if (data.value.messages[i].isFile) {
+                            $('#currentChat .chats').append(`
+                <div class="chat-you row">
+                                <div class="chat col-2">
+                                    <small>${data.value.messages[i].username}</small>
+                                    <p><a href='/${data.value.messages[i].filePath}' target="_blank">${data.value.messages[i].content}</a></p>
+                                    <span>${data.value.messages[i].postDate}</span>
+                                </div>
+                                <div class="col-10" style="display:none" id="message-option-list-${data.value.messages[i].id}">
+                                    <button class="btn btn-danger" onclick="DeleteMessage('${data.value.messages[i].id}')"> حذف </button>
+                                    <button class="btn btn-white" onclick="$('#message-option-list-${data.value.messages[i].id}').css('display','none')">بستن</button>
+                                </div>
+                </div>`);
+                        }
+                        else {
+                            $('#currentChat .chats').append(`
                 <div class="chat-you row">
                                 <div class="chat col-2">
                                     <small>${data.value.messages[i].username}</small>
@@ -248,6 +282,7 @@ function AddUserToGroup(event) {
                                     <button class="btn btn-white" onclick="$('#message-option-list-${data.value.messages[i].id}').css('display','none')">بستن</button>
                                 </div>
                 </div>`);
+                        }
                     }
                     $(`#chatList li[data-chatid="${id}"] span`).text(data.value.messages[i].postDate);
                 }
@@ -279,6 +314,43 @@ function AddUserToGroup(event) {
                 }
             }
         });
+    </script>
+    <script>
+    $(".fileUpload").click(function () {
+        var isText = $('.fileUpload i').hasClass("fa fa-upload");
+        if (isText) {
+            $(".footer input[type='text']").hide();
+            $(".footer input[type='text']").val('');
+            $(".footer input[type='file']").show();
+            $(".fileUpload i").removeClass("fa-upload");
+            $(".fileUpload i").addClass("fa-align-justify");
+        } else {
+            $(".footer input[type='text']").show();
+            $(".footer input[type='file']").hide();
+            $(".fileUpload i").addClass("fa-upload");
+            $(".fileUpload i").removeClass("fa-align-justify");
+        }
+    });
+        function SendMedia() {
+            var formData = new FormData();
+            formData.append("ChatId", $('#ChatOption').attr('data-chatId'));
+            formData.append("Media", document.getElementById("fMedia").files[0]);
+        $.ajax({
+            type: "POST",
+            contentType: false,
+            processData: false,
+            enctype: "multipart/form-data",
+            url: '@Url.Action("SendMedia", "Home")',
+            data: formData,
+            success: function (res) {
+                document.getElementById("fMedia").value = '';
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                alert(thrownError);
+            }
+        });
+        }
     </script>
 }
 @section Modals
